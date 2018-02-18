@@ -40,6 +40,7 @@ export class VisualizationCardComponent implements OnInit {
   }
 
   onVisualizationFilterUpdate(filters: any) {
+    console.log("Filters:",filters);
     let results = null;
     this.visualizationLoading = true;
     this.visualizationLoaded = false;

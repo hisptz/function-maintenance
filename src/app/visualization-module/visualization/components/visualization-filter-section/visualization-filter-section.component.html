@@ -28,16 +28,17 @@
 
     </div>
   </div>
+
   <div class="visualization-filter-body visualization-filter-border" [@open] *ngIf="selectedFilter">
     <!--org unit filter-->
     <app-org-unit-filter *ngIf="selectedFilter === 'ORG_UNIT'" [orgUnitModel]="selectedDimensions?.orgUnitModel"
-                         (onOrgUnitClose)="selectedFilter = undefined"
+                         (onOrgUnitClose)="selectedFilter = undefined" #orgUnitTree
                          (onOrgUnitUpdate)="onFilterUpdateAction($event, 'ORG_UNIT')"></app-org-unit-filter>
     <!--end of org unit filter-->
 
     <!--period filter-->
     <app-period-filter *ngIf="selectedFilter === 'PERIOD'" [selectedPeriods]="selectedDimensions?.selectedPeriods"
-                       (onPeriodFilterClose)="selectedFilter = undefined"
+                       (onPeriodFilterClose)="selectedFilter = undefined" #periodTree
                        (onPeriodUpdate)="onFilterUpdateAction($event, 'PERIOD')"></app-period-filter>
     <!--end of period filter-->
 
@@ -53,5 +54,24 @@
                 (onLayoutUpdate)="onFilterUpdateAction($event, 'LAYOUT')"></app-layout>
     <!--end of layout filter-->
 
+
+  </div>
+  <div class="pull-right" style="margin-top: -30px;">
+    <div class="btn-group" role="group" style="width: 100%;" aria-label="Button group with nested dropdown">
+      <button type="button" class="btn btn-outline-primary" style="width: 100%;" (click)="updateSelection()">Test</button>
+
+      <div class="btn-group" dropdown style="padding:0px">
+        <button dropdownToggle type="button" class="col-sm-12 btn btn-primary dropdown-toggle">
+          <span class="caret pull-right"></span>
+        </button>
+        <ul *dropdownMenu class="dropdown-menu dropdown-menu-right test" style="z-index: 10000;" role="menu">
+          <li role="menuitem" *ngFor="let key of objectKeys(runOptions)">
+            <a class="dropdown-item" (click)="run(runOptions[key])">{{runOptions[key].name}}
+              <span *ngIf="runOptions[key].exception" class="badge badge-pill badge-danger pull-right">exception</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>

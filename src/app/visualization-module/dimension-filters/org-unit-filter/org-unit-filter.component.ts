@@ -79,6 +79,73 @@ export class OrgUnitFilterComponent implements OnInit, OnDestroy {
     }
   }
 
+  setOneOrgUnit(){
+    if(this.orgUnitModel.selectedOrgUnits.length == 0){
+      this.orgUnitModel.selectedOrgUnits = [{name:this.organisationunits[0].name,id:this.organisationunits[0].id,level:this.organisationunits[0].level}];
+    }else{
+      this.orgUnitModel.selectedOrgUnits = [this.orgUnitModel.selectedOrgUnits[0]];
+    }
+    //
+    //this.orgunit_model.selected_orgunits = this.selectedOrgUnits;
+  }
+  setMultipleOrgUnits(){
+    if(this.orgUnitModel.selectedOrgUnits.length == 0){
+      console.log("Here1:",this.organisationunits);
+      this.orgUnitModel.selectedOrgUnits.push({name:this.organisationunits[0].name,id:this.organisationunits[0].id,level:this.organisationunits[0].level})
+    }else{
+
+    }
+    this.orgUnitModel.selectedOrgUnits = this.getOrgUnitsObjectForAnalytics(this.orgUnitModel, true);
+    //
+  }
+  getSelectedOrgUnits(){
+    let ou = [];
+    this.orgUnitModel.selectedOrgUnits.forEach((orgUnit)=>{
+      ou.push(orgUnit.id)
+    })
+    return ou.join(";")
+  }
+  getOrgUnitsObjectForAnalytics(orgunit_model: any, with_children: boolean) {
+    const orgUnits = [];
+    let organisation_unit_analytics_string = '';
+    if ( orgunit_model.selected_user_orgunit.length !== 0 ) {
+      orgunit_model.selected_user_orgunit.forEach((orgunit) => {
+        orgUnits.push(orgunit);
+      });
+    }else {
+      // if there is only one organisation unit selected
+      if ( orgunit_model.selected_orgunits.length === 1 ) {
+        const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+        orgUnits.push({level:detailed_orgunit.level,name:detailed_orgunit.data.name,id:detailed_orgunit.id});
+        if (detailed_orgunit.hasOwnProperty('children') && with_children) {
+          for ( const orgunit of detailed_orgunit.children ) {
+            orgUnits.push({level:orgunit.level,name:orgunit.data.name,id:orgunit.id});
+          }
+        }
+
+      }else {
+        orgunit_model.selected_orgunits.forEach((orgunit) => { // If there is more than one organisation unit selected
+          orgUnits.push(orgunit);
+        });
+      }
+      if (orgunit_model.selection_mode === 'orgUnit') {
+
+      }if (orgunit_model.selection_mode === 'Level') {
+        orgunit_model.selected_levels.forEach((level) => {
+          organisation_unit_analytics_string += 'LEVEL-' + level.level + ';';
+        });
+      }if (orgunit_model.selection_mode === 'Group') {
+        orgunit_model.selected_groups.forEach((group) => {
+          organisation_unit_analytics_string += 'OU_GROUP-' + group.id + ';';
+        });
+      }
+    }
+    return orgUnits;
+  }
+  setNoOrgUnits(){
+    this.orgUnitModel.selectedOrgUnits = [];
+    //
+  }
   ngOnInit() {
     if (this.orgUnitTreeConfig.multiple) {
       if (this.orgUnitTreeConfig.multiple_key === 'none') {
