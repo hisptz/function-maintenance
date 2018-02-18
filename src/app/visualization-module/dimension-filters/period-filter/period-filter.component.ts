@@ -51,6 +51,31 @@ export class PeriodFilterComponent implements OnInit {
     this.periods$.next(this._periods);
   }
 
+  public setNoPeriod(){
+    this.selectedPeriods = [];
+  }
+  public setOnePeriod(){
+    if(this.selectedPeriods.length != 1){
+      this.selectedPeriods = [];
+      this.selectedPeriods.push(this._periods[0]);
+    }
+  }
+  public setMultiplePeriod(){
+    if(this.selectedPeriods.length <= 1) {
+      this.selectedPeriods = [];
+      this._periods.forEach((period)=>{
+        this.selectedPeriods.push(period)
+      })
+    }
+  }
+
+  public getSelectedPeriods(){
+    let selected_periods = [];
+    this.selectedPeriods.forEach((period)=>{
+      selected_periods.push(period.id)
+    })
+    return selected_periods.join(";")
+  }
   getPeriods(selectedPeriodType: string, year: number, selectedPeriods: any[]) {
     return this.updatePeriodsWithSelected(
       this.periodService.getPeriodsBasedOnType(

@@ -16,10 +16,13 @@
   padding: 5px;
   z-index: 1000;
 }
-
+.visualization-filter-section-container{
+  min-width: 100%;
+}
 .visualization-card-header-right,
 .visualization-card-header-left {
   display: flex;
+  min-width: 100%;
 }
 
 .visualization-card-body {
