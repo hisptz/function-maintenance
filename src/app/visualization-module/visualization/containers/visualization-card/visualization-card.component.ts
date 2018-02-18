@@ -17,8 +17,8 @@ export class VisualizationCardComponent implements OnInit {
   @Input() visualizationUiConfig: fromModels.VisualizationUiConfig;
   @Input() visualizationLayers: fromModels.VisualizationLayer[];
 
-  visualizationLoading: boolean = false;
-  visualizationLoaded: boolean = true;
+  visualizationLoading: boolean;
+  visualizationLoaded: boolean;
 
   constructor(private analyticsService: AnalyticsService) {
     this.visualizationUiConfig = fromConstants.DEFAULT_VISUALIZATION_UI_CONFIG;
@@ -29,6 +29,10 @@ export class VisualizationCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.visualizationLayers.length > 0) {
+      this.visualizationLoading = false;
+      this.visualizationLoaded = true;
+    }
   }
 
   currentVisualizationChange(visualizationType: string) {
