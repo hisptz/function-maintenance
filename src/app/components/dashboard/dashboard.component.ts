@@ -1,5 +1,7 @@
 import { Component, OnInit,Input } from '@angular/core';
 import {FunctionService} from "../../services/function.service";
+import {VisualizationLayer} from "../../visualization-module/visualization/models/visualization-layer";
+import {INITIAL_LAYOUT_MODEL} from '../layout/model/layout-model';
 
 @Component({
   selector: 'app-dashboard',
@@ -103,6 +105,8 @@ export class DashboardComponent implements OnInit {
   results;
   loadingError;
   progress = 0;
+  layers;
+  layout = INITIAL_LAYOUT_MODEL
   ngOnInit() {
     this.results = false;
     this.loading = false;
@@ -110,8 +114,15 @@ export class DashboardComponent implements OnInit {
       this.progress = progress;
     }
     try{
+      this.layers = []
       this.functionService.run(this.parameters, this.func).subscribe((results:any)=> {
         this.parameters.rules = this.func.rules;
+        let layer:VisualizationLayer ={
+          id:"",
+          data:results,
+          layout:this.layout
+        }
+        this.layers.push(layer)
         this.results = results;
         this.loading = true;
       },(error)=>{

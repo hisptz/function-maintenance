@@ -3,7 +3,8 @@
   {{progress}}%
 </div>
 <div *ngIf="results && showResult" class="card panel-default">
-  <div class="card-body">
+  <app-visualization-card [visualizationLayers]="layers"></app-visualization-card>
+  <div style="display:none" class="card-body">
     <div class="visualization-card"
     >
       <!--Visualization card header content-->

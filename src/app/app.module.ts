@@ -57,6 +57,7 @@ import {ChartModule} from "./chart-module/chart.module";
 import {TableModule} from "./table/table.module";
 import {LayoutModule} from "./components/layout/layout.module";
 import { EditorComponent } from './components/editor/editor.component';
+import {VisualizationModule} from "./visualization-module/visualization/visualization.module";
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { EditorComponent } from './components/editor/editor.component';
     AceEditorModule,
     PrettyJsonModule,
     TreeModule,
+    VisualizationModule,
     SelectModule,
     TooltipModule.forRoot(),
     TabsModule.forRoot(),
