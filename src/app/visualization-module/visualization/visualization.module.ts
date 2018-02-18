@@ -8,6 +8,8 @@ import { DataFilterModule } from '../dimension-filters/data-filter/data-filter.m
 import { OrgUnitFilterModule } from '../dimension-filters/org-unit-filter/org-unit-filter.module';
 import { PeriodFilterModule } from '../dimension-filters/period-filter/period-filter.module';
 import { LayoutModule } from '../dimension-filters/layout/layout.module';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +17,7 @@ import { LayoutModule } from '../dimension-filters/layout/layout.module';
     OrgUnitFilterModule,
     PeriodFilterModule,
     LayoutModule,
+    BsDropdownModule,
     ...fromModules.modules
   ],
   declarations: [...fromContainers.containers, ...fromComponents.components],
