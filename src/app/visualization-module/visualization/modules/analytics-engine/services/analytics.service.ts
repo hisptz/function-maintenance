@@ -131,7 +131,7 @@ export class AnalyticsService {
                     )
                   ).subscribe(
                     (analyticsResponse: any) => {
-                      if (analyticsResponse.rows) {
+                      if (analyticsResponse && analyticsResponse.rows) {
                         observer.next(analyticsHelpers.getMergedAnalytics(
                           _.filter([analyticsResponse, analyticsMetadata], analytics => analytics)));
                       }
@@ -202,6 +202,7 @@ export class AnalyticsService {
 
   private _getAnalyticsForNormalDimensions(dataDimension: DataDimension): Observable<any> {
     const analyticsUrl = analyticsHelpers.getAnalyticsUrl(dataDimension);
+    console.log(analyticsUrl, dataDimension);
 
     if (analyticsUrl === '') {
       of({});
@@ -211,7 +212,26 @@ export class AnalyticsService {
   }
 
   private _getAnalyticsForFunctionDimensions(dataDimension: DataDimension): Observable<any> {
-    return of({});
+    console.log(dataDimension);
+
+    // get functions id from data
+    const functionDimensionValues: any = _.filter(_.map(_.map(
+      _.filter(dataDimension.dimensions, (dimensionObject: any) => dimensionObject.dimension === 'fn'),
+      (functionDimension: any) => functionDimension.value), (functionDimension: string) => {
+      const splitedDimension = functionDimension.split('.');
+      return splitedDimension.length === 2 ? {
+        functionId: splitedDimension[0],
+        ruleId: splitedDimension[1]
+      } : null;
+    }), (functionDimension: any) => functionDimension);
+
+
+    console.log(functionDimensionValues);
+
+    // From rule id from associated functions
+
+    // run the function to get desired result
+    return of(null);
   }
 
   private _getAnalyticsMetadata(dimensionsObject: any): Observable<any> {

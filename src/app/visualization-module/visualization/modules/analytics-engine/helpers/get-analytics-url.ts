@@ -6,13 +6,18 @@ import {
 } from '../models/data-dimension';
 
 function flattenDimensions(dimensions: Dimension[]): string {
+
+  if (_.some(dimensions, (dimension: any) => dimension.value === '')) {
+    return '';
+  }
+
   return _.map(dimensions, (dimensionObject: Dimension) => {
     const dimensionPrefix = 'dimension=';
     return dimensionObject.value !== ''
       ? dimensionPrefix +
-          dimensionObject.dimension +
-          ':' +
-          dimensionObject.value
+             dimensionObject.dimension +
+             ':' +
+             dimensionObject.value
       : '';
   }).join('&');
 }
@@ -21,8 +26,8 @@ function getAggregateAnalyticsUrl(dataDimension: DataDimension): string {
   const flattenedDimensionString = flattenDimensions(dataDimension.dimensions);
   return flattenedDimensionString !== ''
     ? 'analytics.json?' +
-        flattenedDimensionString +
-        getAnalyticsUrlOptions(dataDimension.config)
+           flattenedDimensionString +
+           getAnalyticsUrlOptions(dataDimension.config)
     : '';
 }
 

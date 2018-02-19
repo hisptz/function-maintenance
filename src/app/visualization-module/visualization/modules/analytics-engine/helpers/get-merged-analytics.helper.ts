@@ -80,6 +80,11 @@ export function getMergedAnalytics(splitedAnalyticsArray: any[]) {
   });
 
   metadata.names = metadataNames;
+  console.log({
+    headers: headers,
+    metaData: metadata,
+    rows: mergedRows
+  })
   return {
     headers: headers,
     metaData: metadata,
