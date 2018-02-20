@@ -42,6 +42,7 @@ export class VisualizationFilterSectionComponent implements OnInit {
   @Input() loaded: boolean;
   @Input() filterConfig: any;
   @Input() showFilters: boolean;
+  @Input() fn;
   @Output() onFilterUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onLayoutUpdate: EventEmitter<any> = new EventEmitter<any>();
   selectedFilter: string;
@@ -129,6 +130,7 @@ export class VisualizationFilterSectionComponent implements OnInit {
   }
   onFilterUpdateAction(filterValue: any, filterType: string) {
 
+    console.log("Filter:",filterValue);
     this.selectedFilter = undefined;
 
     if (filterType === 'LAYOUT') {

@@ -130,6 +130,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       })
     }catch(e){
+      console.error(e);
       this.loadingError = {message:"Please check your code"};
       this.loading = false;
     }

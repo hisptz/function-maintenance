@@ -16,6 +16,7 @@ export class VisualizationCardComponent implements OnInit {
   @Input() visualizationType: string;
   @Input() visualizationUiConfig: fromModels.VisualizationUiConfig;
   @Input() visualizationLayers: fromModels.VisualizationLayer[];
+  @Input() fn;
 
   visualizationLoading: boolean;
   visualizationLoaded: boolean;

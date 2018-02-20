@@ -7,6 +7,7 @@
       <div
         class="visualization-filter-section-container">
         <app-visualization-filter-section
+          [fn]="fn"
           [loaded]="true"
           (onFilterUpdate)="onVisualizationFilterUpdate($event)"
           (onLayoutUpdate)="onVisualizationLayoutUpdate($event)"

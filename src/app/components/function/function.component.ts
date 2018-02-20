@@ -4,6 +4,8 @@ import { ActivatedRoute,Params,Router,NavigationStart } from '@angular/router';
 import {ToasterService} from 'angular2-toaster';
 import {HttpClientService} from "../../services/http-client.service";
 import { TabsetComponent } from 'ngx-bootstrap';
+import {UserService} from "../../services/user.service";
+import {Observable} from 'rxjs/Rx';
 
 declare var $:any
 
@@ -17,6 +19,7 @@ export class FunctionComponent implements OnInit {
   id;
   operation
   constructor(private functionService:FunctionService,
+              private userService:UserService,
               private route:ActivatedRoute,
               private router:Router,
               private toasterService: ToasterService,
@@ -32,78 +35,88 @@ export class FunctionComponent implements OnInit {
   loading;
   ngOnInit() {
   }
-  init() {
-    this.loading = true;
-    if(this.id == "new"){
-      this.functionService.getId().subscribe((results:any)=> {
-        this.http.get("dataElements.json?pageSize=1").subscribe((dataElementResults)=>{
-          this.func={
-            function:'//Example of function implementation\n' +
-            'parameters.progress(50);\n' +
-            '$.ajax({\n' +
-            '\turl: "../../../api/25/analytics.json?dimension=dx:" + parameters.rule.json.data + "&dimension=pe:" + parameters.pe + "&dimension=ou:" + parameters.ou,\n' +
-            '\ttype: "GET",\n' +
-            '\tsuccess: function(analyticsResults) {\n' +
-            '\t\t  parameters.success(analyticsResults);\n' +
+  loadFunction(){
+    return new Observable((observable)=>{
+      if(this.id == "new"){
+        this.functionService.getId().subscribe((results:any)=> {
+          this.http.get("dataElements.json?pageSize=1").subscribe((dataElementResults)=>{
+            this.func={
+              function:'//Example of function implementation\n' +
+              'parameters.progress(50);\n' +
+              '$.ajax({\n' +
+              '\turl: "../../../api/25/analytics.json?dimension=dx:" + parameters.rule.json.data + "&dimension=pe:" + parameters.pe + "&dimension=ou:" + parameters.ou,\n' +
+              '\ttype: "GET",\n' +
+              '\tsuccess: function(analyticsResults) {\n' +
+              '\t\t  parameters.success(analyticsResults);\n' +
 
-            '\t},\n' +
-            '\terror:function(error){\n' +
-            '\t\t  parameters.error(error);\n' +
-            '\t}\n' +
-            '});',
-            rules:[
-              {
-                id: results.codes[0],
-                name: "Default",
-                isDefault:true,
-                description: "This is the default rule. Using the data element '" + dataElementResults.dataElements[0].displayName+ "'.",
-                json: JSON.stringify({"data": dataElementResults.dataElements[0].id})
-              }
-            ]
-          };
-          this.testFunc = this.func;
-          this.latestCode = this.func.function;
-          this.loading = false;
+              '\t},\n' +
+              '\terror:function(error){\n' +
+              '\t\t  parameters.error(error);\n' +
+              '\t}\n' +
+              '});',
+              rules:[
+                {
+                  id: results.codes[0],
+                  name: "Default",
+                  isDefault:true,
+                  description: "This is the default rule. Using the data element '" + dataElementResults.dataElements[0].displayName+ "'.",
+                  json: JSON.stringify({"data": dataElementResults.dataElements[0].id})
+                }
+              ]
+            };
+            observable.next();
+            observable.complete();
+          },(error)=>{
+            observable.error(error.json());
+            observable.complete();
+            this.toasterService.pop('error', 'Error', error.message);
+          })
         },(error)=>{
+          observable.error(error.json());
+          observable.complete();
           this.toasterService.pop('error', 'Error', error.message);
         })
-      },(error)=>{
-        this.toasterService.pop('error', 'Error', error.message);
-      })
-    }else{
-      this.functionService.get(this.id).subscribe((func:any)=> {
-        this.func = func;
-        this.testFunc = func;
-        this.latestCode = func.function;
+      }else{
+        this.functionService.get(this.id).subscribe((func:any)=> {
+          this.func = func;
+          observable.next();
+          observable.complete();
+        },(error)=>{
+          observable.error(error.json());
+          observable.complete();
+          this.toasterService.pop('error', 'Error', error.message);
+        })
+      }
+    })
+  }
+  init() {
+    this.loading = true;
+    this.loadFunction().subscribe(()=>{
+      this.userService.getCurrentUser().subscribe((user:any)=>{
+        this.parameters.ou = user.organisationUnits[0].id;
+        this.parameters.pe = "" + (new Date()).getFullYear();
+        let theRule = this.func.rules[0];
+        this.func.rules.forEach((rule)=>{
+          if(rule.isDefault){
+            theRule = rule
+          }
+        })
+        this.parameters.rule = theRule;
+        this.testFunc = this.func;
+        this.latestCode = this.func.function;
         this.loading = false;
-      },(error)=>{
-        this.toasterService.pop('error', 'Error', error.message);
       })
-    }
+    })
   }
 
   testFunc
   latestCode
   onChange(event){
-    this.latestCode = event;
+    alert("Here");
+    this.testFunc.function = event;
   }
   parameters:any = {};
   show;
-  onRun(event){
-    this.show = false;
-    setTimeout(()=>{
-      this.parameters = event;
-      if(typeof event.rule.json == "string"){
-        this.parameters.rule.json = JSON.parse(event.rule.json);
-      }
-      if(this.selectedRule){
-        this.parameters.rule = this.selectedRule;
-      }
-      this.testFunc = this.func;
-      this.testFunc.function = this.latestCode;
-      this.show = true;
-    })
-  }
   loadingSave;
   loadingSaveError;
   save(goBack){

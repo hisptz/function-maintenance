@@ -29,27 +29,28 @@
     </div>
   </div>
 
-  <div class="visualization-filter-body visualization-filter-border" [@open] *ngIf="selectedFilter">
+  <div [ngClass]="{'d-none':!selectedFilter,'d-block':selectedFilter}"
+       class="visualization-filter-body visualization-filter-border" [@open]>
     <!--org unit filter-->
-    <app-org-unit-filter *ngIf="selectedFilter === 'ORG_UNIT'" [orgUnitModel]="selectedDimensions?.orgUnitModel"
+    <app-org-unit-filter [ngClass]="{'d-none':selectedFilter != 'ORG_UNIT','d-block':selectedFilter === 'ORG_UNIT'}" [orgUnitModel]="selectedDimensions?.orgUnitModel"
                          (onOrgUnitClose)="selectedFilter = undefined" #orgUnitTree
                          (onOrgUnitUpdate)="onFilterUpdateAction($event, 'ORG_UNIT')"></app-org-unit-filter>
     <!--end of org unit filter-->
 
     <!--period filter-->
-    <app-period-filter *ngIf="selectedFilter === 'PERIOD'" [selectedPeriods]="selectedDimensions?.selectedPeriods"
+    <app-period-filter [ngClass]="{'d-none':selectedFilter != 'PERIOD','d-block':selectedFilter === 'PERIOD'}" [selectedPeriods]="selectedDimensions?.selectedPeriods"
                        (onPeriodFilterClose)="selectedFilter = undefined" #periodTree
                        (onPeriodUpdate)="onFilterUpdateAction($event, 'PERIOD')"></app-period-filter>
     <!--end of period filter-->
 
     <!--data filter-->
-    <app-data-filter *ngIf="selectedFilter === 'DATA'" [selectedItems]="selectedDimensions?.selectedDataItems"
-                     (onDataFilterClose)="selectedFilter = undefined"
+    <app-data-filter [ngClass]="{'d-none':selectedFilter != 'DATA','d-block':selectedFilter === 'DATA'}" [selectedItems]="selectedDimensions?.selectedDataItems"
+                     (onDataFilterClose)="selectedFilter = undefined"  #dataFilter
                      (onDataUpdate)="onFilterUpdateAction($event, 'DATA')"></app-data-filter>
     <!--end of data filter-->
 
     <!--layout filter-->
-    <app-layout *ngIf="selectedFilter === 'LAYOUT'" [layoutModel]="selectedDimensions?.layoutModel"
+    <app-layout [ngClass]="{'d-none':selectedFilter != 'LAYOUT','d-block':selectedFilter === 'LAYOUT'}" [layoutModel]="selectedDimensions?.layoutModel"
                 [visualizationType]="visualizationType" (onLayoutClose)="selectedFilter = undefined"
                 (onLayoutUpdate)="onFilterUpdateAction($event, 'LAYOUT')"></app-layout>
     <!--end of layout filter-->
