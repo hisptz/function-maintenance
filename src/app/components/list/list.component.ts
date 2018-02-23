@@ -6,6 +6,7 @@ import { ActivatedRoute,Params,Router,NavigationStart } from '@angular/router';
 import {ToasterService} from 'angular2-toaster';
 import {UserService} from "../../services/user.service";
 declare var $:any;
+declare var _:any;
 
 @Component({
   selector: 'app-list',
@@ -127,4 +128,8 @@ export class ListComponent implements OnInit {
     })
     //console.log()
   }
+  currentPage = 1;
+  currentPageSize = 5;
+  pageSizes = [2,5,10,25];
+  range = _.range
 }

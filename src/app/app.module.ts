@@ -58,6 +58,8 @@ import { EditorComponent } from './components/editor/editor.component';
 import { VisualizationModule } from './visualization-module/visualization/visualization.module';
 import { ChartModule } from './visualization-module/visualization/modules/chart/chart.module';
 import { TableModule } from './visualization-module/visualization/modules/table/table.module';
+import {DataTableModule as  DataTableNew} from 'angular-4-data-table';
+import { PaginatePipe } from './pipes/paginate.pipe';
 
 @NgModule({
   declarations: [
@@ -82,13 +84,15 @@ import { TableModule } from './visualization-module/visualization/modules/table/
     DataFilterPipe,
     RuleSelectorComponent,
     DefaultRulePipe,
-    EditorComponent
+    EditorComponent,
+    PaginatePipe
   ],
   imports: [
     BrowserModule,
     LayoutModule,
     BsDropdownModule.forRoot(),
     DataTableModule,
+    DataTableNew,
     MenuModule,
     FormsModule,
     HttpModule,

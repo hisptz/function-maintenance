@@ -41,12 +41,23 @@ export class VisualizationCardComponent implements OnInit {
   }
 
   onVisualizationFilterUpdate(filters: any) {
-    console.log("Filters:",filters);
+    let newFilter = [];
+    filters.forEach((fil)=>{
+      let found = false;
+      newFilter.forEach((newFil)=>{
+        if(newFil.dimension == fil.dimension || fil.value == ""){
+          found = true
+        }
+      })
+      if(!found){
+        newFilter.push(fil)
+      }
+    })
     let results = null;
     this.visualizationLoading = true;
     this.visualizationLoaded = false;
     this.analyticsService.getAnalytics('', {
-      dimensions: filters,
+      dimensions: newFilter,
       analyticsType: 'AGGREGATE'
     }).subscribe((resultsResponse) => {
       results = resultsResponse;

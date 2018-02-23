@@ -580,7 +580,6 @@ export class DataFilterComponent implements OnInit, OnDestroy {
 
     this.selectedGroup = {id: 'ALL', name: '[ All ]'};
     this.dataGroups = this.groupList();
-
     this.availableItems = this.dataItemList(this._selectedItems, this.selectedGroup);
     this.p = 1;
     this.listchanges = '';

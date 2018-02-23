@@ -10,11 +10,12 @@ import * as analyticsHelpers from '../helpers';
 import { DataDimension } from '../models/data-dimension';
 import { AnalyticsHttpClientService } from './analytics-http-client.service';
 import { AnalyticsDbService } from './analytics-db.service';
+import {FunctionService} from "./function.service";
 
 @Injectable()
 export class AnalyticsService {
   constructor(private httpClient: AnalyticsHttpClientService,
-    private analyticsDB: AnalyticsDbService) {
+    private analyticsDB: AnalyticsDbService,private functionService:FunctionService) {
   }
 
   getAnalytics(analyticsUrl: string,
@@ -35,7 +36,6 @@ export class AnalyticsService {
          */
         const analyticsUrlToUse =
           analyticsUrl || analyticsHelpers.getAnalyticsUrl(dataDimension);
-
         if (analyticsUrlToUse !== '') {
           /**
            * Deduce dimensions from url
@@ -202,8 +202,6 @@ export class AnalyticsService {
 
   private _getAnalyticsForNormalDimensions(dataDimension: DataDimension): Observable<any> {
     const analyticsUrl = analyticsHelpers.getAnalyticsUrl(dataDimension);
-    console.log(analyticsUrl, dataDimension);
-
     if (analyticsUrl === '') {
       of({});
     }
@@ -212,8 +210,6 @@ export class AnalyticsService {
   }
 
   private _getAnalyticsForFunctionDimensions(dataDimension: DataDimension): Observable<any> {
-    console.log(dataDimension);
-
     // get functions id from data
     const functionDimensionValues: any = _.filter(_.map(_.map(
       _.filter(dataDimension.dimensions, (dimensionObject: any) => dimensionObject.dimension === 'fn'),
@@ -225,13 +221,41 @@ export class AnalyticsService {
       } : null;
     }), (functionDimension: any) => functionDimension);
 
-
-    console.log(functionDimensionValues);
-
     // From rule id from associated functions
 
     // run the function to get desired result
-    return of(null);
+    return new Observable(observer => {
+      this.functionService.get(functionDimensionValues[0].functionId).subscribe((func:any)=>{
+        let selectedRule;
+        func.rules.forEach((rule)=>{
+          if(rule.id == functionDimensionValues[0].ruleId){
+            selectedRule = rule;
+          }
+        })
+        let parameters = {
+          dx:_.findKey(dataDimension.dimensions,
+            (dimensionObject:any) => dimensionObject.dimension !== 'dx'),
+          ou:_.findKey(dataDimension.dimensions,
+            (dimensionObject:any) => dimensionObject.dimension !== 'ou'),
+          pe:_.findKey(dataDimension.dimensions,
+            (dimensionObject:any) => dimensionObject.dimension !== 'pe'),
+          rule:selectedRule
+        }
+        dataDimension.dimensions.forEach((dimension)=>{
+          if(dimension.dimension == "pe"){
+            parameters.pe = dimension.value
+          }else if(dimension.dimension == "ou"){
+            parameters.ou = dimension.value
+          }
+        })
+        this.functionService.run(parameters, func).subscribe((results:any)=> {
+          observer.next(results);
+          observer.complete();
+        },(error)=>{
+
+        })
+      })
+    });
   }
 
   private _getAnalyticsMetadata(dimensionsObject: any): Observable<any> {

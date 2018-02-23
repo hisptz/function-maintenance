@@ -10,7 +10,6 @@ function flattenDimensions(dimensions: Dimension[]): string {
   if (_.some(dimensions, (dimension: any) => dimension.value === '')) {
     return '';
   }
-
   return _.map(dimensions, (dimensionObject: Dimension) => {
     const dimensionPrefix = 'dimension=';
     return dimensionObject.value !== ''
@@ -57,7 +56,6 @@ export function getAnalyticsUrl(dataDimension: DataDimension): string {
   if (!dataDimension) {
     return '';
   }
-
   switch (dataDimension.analyticsType) {
     case 'AGGREGATE':
       return getAggregateAnalyticsUrl(dataDimension);
