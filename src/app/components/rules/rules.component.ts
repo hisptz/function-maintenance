@@ -1,6 +1,7 @@
 import { Component, OnInit,Input, forwardRef,Provider,Output,EventEmitter } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import {HttpClientService} from "../../services/http-client.service";
+declare var _:any;
 
 const noop = () => {
 };
@@ -22,7 +23,6 @@ export class RulesComponent implements OnInit, ControlValueAccessor {
   }
 
   @Input() operation;
-
   constructor(private http:HttpClientService) {
   }
 
@@ -151,4 +151,8 @@ export class RulesComponent implements OnInit, ControlValueAccessor {
   registerOnTouched(fn: any) {
     this.onTouchedCallback = fn;
   }
+  currentPage = 1;
+  currentPageSize = 5;
+  pageSizes = [5,10,25];
+  range = _.range
 }

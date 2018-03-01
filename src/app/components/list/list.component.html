@@ -46,7 +46,7 @@
         </th>
       </tr>
       </thead>
-      <tbody *ngFor="let function of functions | hasFunctionAccess:user | dataFilter : filterQuery:'name'| paginate:currentPage:currentPageSize;let i = index" (click)="details = function;sharing = undefined" style="cursor:pointer"
+      <tbody *ngFor="let function of functions | hasFunctionAccess:user | dataFilter : filterQuery:'name' | paginate: { itemsPerPage: currentPageSize, currentPage: currentPage };let i = index" (click)="details = function;sharing = undefined" style="cursor:pointer"
              [contextMenu]="contextMenu"
              (contextmenu)="onContextMenu($event, function)"
              >
@@ -87,28 +87,14 @@
       <tr>
         <td colspan="100%">
           <div class="row">
-            <div class="col-sm-6">Showing {{(functions | hasFunctionAccess:user | dataFilter : filterQuery:'name'| paginate:currentPage:currentPageSize).length}} of {{(functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length}}</div>
-            <div class="col-sm-6">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li [ngClass]="{'disabled':currentPage == 1}" class="page-item">
-                  <a class="page-link" href="#" aria-label="Previous"
-                     (click)="currentPage = currentPage - 1">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                </li>
-                <li [ngClass]="{'active':currentPage == page}" class="page-item" *ngFor="let page of range(1,((functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length / currentPageSize) + 1)">
-                  <a class="page-link" href="#" (click)="currentPage = page">{{page}}</a></li>
-                <li [ngClass]="{'disabled':''+currentPage == ((functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length / currentPageSize).toFixed()}" class="page-item">
-                  <a class="page-link" href="#" aria-label="Next"
-                     (click)="currentPage = currentPage + 1">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            <!--<div class="col-sm-6">Showing {{(functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length}} of {{(functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length}}</div>-->
+            <div class="col-sm-4">
+              Showing {{((currentPage - 1) * currentPageSize) + 1}} - {{((currentPage - 1) * currentPageSize) + (functions | hasFunctionAccess:user | dataFilter : filterQuery:'name'| paginate: { itemsPerPage: currentPageSize, currentPage: currentPage }).length}} of {{(functions | hasFunctionAccess:user | dataFilter : filterQuery:'name').length}}
+            </div>
+            <div class="col-sm-4 offset-1">
+              <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+            <div class="col-sm-3">
             <nav aria-label="Page navigation">
               <ul class="pagination pull-right">
                 <li [ngClass]="{'active':currentPageSize == pageSize}" class="page-item" *ngFor="let pageSize of pageSizes"><a class="page-link" (click)="currentPageSize = pageSize">{{pageSize}}</a></li>

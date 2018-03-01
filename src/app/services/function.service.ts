@@ -100,6 +100,7 @@ export class FunctionService {
             });
             observ.next(functions);
             observ.complete();
+            //this.createCompletenessFunctions();
           }, (error) => {
             observ.error(error.json());
             observ.complete();

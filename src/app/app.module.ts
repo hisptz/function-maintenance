@@ -26,7 +26,6 @@ import { DataFilterService } from './services/data-filter.service';
 /*import {Store} from "./dashboard-card/providers/store";*/
 import { TreeModule } from 'angular-tree-component';
 import { FunctionService } from './services/function.service';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { DataService } from './services/data.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -60,6 +59,7 @@ import { ChartModule } from './visualization-module/visualization/modules/chart/
 import { TableModule } from './visualization-module/visualization/modules/table/table.module';
 import {DataTableModule as  DataTableNew} from 'angular-4-data-table';
 import { PaginatePipe } from './pipes/paginate.pipe';
+import {NgxPaginationModule} from "./modules/pagination/ngx-pagination.module";
 
 @NgModule({
   declarations: [
@@ -85,11 +85,12 @@ import { PaginatePipe } from './pipes/paginate.pipe';
     RuleSelectorComponent,
     DefaultRulePipe,
     EditorComponent,
-    PaginatePipe
+    //PaginatePipe
   ],
   imports: [
     BrowserModule,
     LayoutModule,
+    NgxPaginationModule,
     BsDropdownModule.forRoot(),
     DataTableModule,
     DataTableNew,
@@ -108,7 +109,6 @@ import { PaginatePipe } from './pipes/paginate.pipe';
     PopoverModule.forRoot(),
     TourNgBootstrapModule.forRoot(),
     DndModule,
-    NgxPaginationModule,
     AppRoutingModule,
     ToasterModule,
     BrowserAnimationsModule,

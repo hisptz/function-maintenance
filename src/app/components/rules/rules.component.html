@@ -1,5 +1,5 @@
-<div>
-  <table *ngIf="rules" class="table table-hover table-bordered" [mfData]="rules | dataFilter : filterQuery:'name'" #mf="mfDataTable" [mfRowsOnPage]="5">
+<div *ngIf="rules">
+  <table class="table table-hover table-bordered">
     <thead>
     <tr *ngIf="rules.length != 0">
       <th colspan="5">
@@ -15,15 +15,18 @@
     </tr>
     <tr>
       <th>
-        <mfDefaultSorter by="name">Name</mfDefaultSorter>
+        #
+      </th>
+      <th>
+        Name
       </th>
       <th style="width: 150px;"*ngIf="operation != 'test'">Action</th>
     </tr>
     </thead>
-    <tbody *ngFor="let rule of mf.data;let i = index">
-    <tr [ngClass]="{'selected-rule':rule.id == selectedRule}">
-      <!--<td>{{mfActivePage}} - {{i + 1}}</td>-->
-      <td>{{rule.name}} <span *ngIf="rule.id == selectedRule">- (Selected Rule for testing)</span><span *ngIf="rule.isDefault" class="badge badge-pill badge-info pull-right">Default</span></td>
+    <tbody *ngFor="let rule of rules | dataFilter : filterQuery:'name'| paginate: { itemsPerPage: currentPageSize, currentPage: currentPage };let i = index">
+    <tr>
+      <td>{{((currentPage - 1) * currentPageSize)+ i + 1}}</td>
+      <td>{{rule.name}}<span *ngIf="rule.isDefault" class="badge badge-pill badge-info pull-right">Default</span></td>
       <td *ngIf="operation != 'test'">
         <button tooltip="Edit Rule" (click)="editRule(rule)" class="btn btn-primary btn-sm">
           <i class="fa fa-pencil" aria-hidden="true"> </i></button>
@@ -47,58 +50,20 @@
       </td>
     </tr>
     </tbody>
-    <tfoot>
-    <tr >
-      <td colspan="4">
-        <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
-      </td>
-    </tr>
-    <!--<tr *ngIf="newRule">
-      <td colspan="100%">
-        <div class="col-sm-6">
-          <label for="name">Name:</label>
-          <input id="name" class="form-control" [(ngModel)]="newRule.name"><br/>
-          <app-message *ngIf="errors.name" [type]="errors.name.type" [messageObject]="errors.name.object">
-          </app-message>
-        </div>
-        <div class="col-sm-12">
-          <label for="name">Description:</label>
-          <textarea class="form-control" [(ngModel)]="newRule.description"></textarea>
-          <br/>
-        </div>
-        <div class="col-sm-12">
-          <ng-template #popTemplate>
-            <div class="card text-white bg-primary mb-3" style="min-width: 20rem;">
-              <div class="card-body">
-                <h5 class="card-title">Java Script Object Notation (JSON)</h5>
-                <p  ng-non-bindable class="card-text">This is the json which will be used in the code as a data input.<br />
-                  Example:<br />{{ {"data":"OxYgdYZaBwS"} | json}}
-                </p>
-              </div>
-            </div>
-          </ng-template>
-          <label for="name">JSON <i class="fa fa-info-circle" containerClass="tooltip-class" placement="right" [popover]="popTemplate"></i></label>
-          <ace-editor
-            [(text)]="newRule.json"
-            [mode]="'javascript'"
-            [options]="options"
-            [readOnly]="false"
-            [autoUpdateContent]="true"
-            [durationBeforeCallback]="1000"
-            (textChanged)="onChange($event)"
-            style="min-height: 200px; width:100%; overflow: auto;" #editor></ace-editor>
-          <br/>
-        </div>
-        <div class="col-sm-12">
-          <button class="btn btn-primary pull-right" (click)="saveNewRule()"><span *ngIf="!savingRule && !newRule.id">Add</span><span *ngIf="!savingRule && newRule.id">Done</span>
-          <span *ngIf="savingRule">
-            <img width='20px' height='20px' src="assets/img/balls-3.svg" alt="">
-              </span>
-          </button>
-          <br/>
-        </div>
-      </td>
-    </tr>-->
-    </tfoot>
   </table>
+  <div class="row">
+    <div class="col-sm-3">Showing {{((currentPage - 1) * currentPageSize) + 1}} - {{((currentPage - 1) * currentPageSize) + (rules | dataFilter : filterQuery:'name'| paginate: { itemsPerPage: currentPageSize, currentPage: currentPage }).length}} of {{(rules | dataFilter : filterQuery:'name').length}}
+    </div>
+    <div class="col-sm-5">
+      <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+    </div>
+    <div class="col-sm-4">
+      <nav aria-label="Page navigation">
+        <ul class="pagination pull-right">
+          <li [ngClass]="{'active':currentPageSize == pageSize}" class="page-item" *ngFor="let pageSize of pageSizes"><a class="page-link" (click)="currentPageSize = pageSize">{{pageSize}}</a></li>
+          <li [ngClass]="{'active':currentPageSize == rules.length}" class="page-item"><a class="page-link" (click)="currentPageSize = rules.length" href="#">All</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
 </div>

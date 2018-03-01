@@ -1,6 +1,6 @@
 .visualization-card {
   width: 100%;
-  position: relative;
+  /*position: relative;*/
   height: 100%;
   overflow: auto;
 }

@@ -130,6 +130,6 @@ export class ListComponent implements OnInit {
   }
   currentPage = 1;
   currentPageSize = 5;
-  pageSizes = [2,5,10,25];
+  pageSizes = [5,10,25];
   range = _.range
 }
