@@ -211,9 +211,11 @@ export class AnalyticsService {
 
   private _getAnalyticsForFunctionDimensions(dataDimension: DataDimension): Observable<any> {
     // get functions id from data
+    console.log("Dimension:",dataDimension);
     const functionDimensionValues: any = _.filter(_.map(_.map(
       _.filter(dataDimension.dimensions, (dimensionObject: any) => dimensionObject.dimension === 'fn'),
-      (functionDimension: any) => functionDimension.value), (functionDimension: string) => {
+      (functionDimension: any) => functionDimension.value.split(";")), (functionDimension: string) => {
+      console.log("functionDimension:",functionDimension)
       const splitedDimension = functionDimension.split('.');
       return splitedDimension.length === 2 ? {
         functionId: splitedDimension[0],
@@ -222,7 +224,7 @@ export class AnalyticsService {
     }), (functionDimension: any) => functionDimension);
 
     // From rule id from associated functions
-
+    console.log("functionDimensionValues:",functionDimensionValues)
     // run the function to get desired result
     return new Observable(observer => {
       this.functionService.get(functionDimensionValues[0].functionId).subscribe((func:any)=>{
