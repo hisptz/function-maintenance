@@ -1,7 +1,7 @@
 {
   "/api": {
     "target1": "https://play.dhis2.org/2.29",
-    "target": "https://test.hisptz.org/dhis",
+    "target": "https://dhis.hisptz.org/dhis",
     "secure": "false",
     "auth1": "system:System123",
     "auth": "rajabumkomwa:DHIS2016",
@@ -9,7 +9,7 @@
   },
   "/": {
     "target1": "https://play.dhis2.org/2.29",
-    "target": "https://test.hisptz.org/dhis",
+    "target": "https://dhis.hisptz.org/dhis",
     "secure": "false",
     "auth1": "system:System123",
     "auth": "rajabumkomwa:DHIS2016",
