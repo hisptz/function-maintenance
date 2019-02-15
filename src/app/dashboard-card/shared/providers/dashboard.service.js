@@ -886,7 +886,7 @@ export var DashboardService = (function () {
                                     var geoFeatures = [];
                                     var dataLayers = [];
                                     var boundaryLayer = {};
-                                    Observable.forkJoin(analyticCalls).subscribe(function (requestResult) {
+                                    forkJoin(analyticCalls).subscribe(function (requestResult) {
                                         requestResult.forEach(function (value, index) {
                                             //get geoFeature and analytic object
                                             if (isArray(value)) {
@@ -1030,7 +1030,7 @@ export var DashboardService = (function () {
                 urlArray.push(analyticsUrl);
                 urlArray.push(geoJsonUrl);
             });
-            Observable.forkJoin($.map(urlArray, function (url) {
+            forkJoin($.map(urlArray, function (url) {
                 return _this.http.get(_this.constant.api + url).map(function (res) { return res.json(); });
             }))
                 .subscribe(function (responses) {

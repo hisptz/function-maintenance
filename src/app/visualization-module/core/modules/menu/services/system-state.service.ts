@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable, timer } from 'rxjs';
 import 'rxjs/add/observable/timer';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class SystemStateService {
 
   checkLoginStatus(startTime: number = 1000, time: number = 5000) {
     return new Observable(observer => {
-      Observable.timer(1000, time).subscribe(() => {
+      timer(1000, time).subscribe(() => {
         this.pingServer().subscribe(
           pingStatus => {
             observer.next({ loggedIn: pingStatus.loggedIn, online: true });

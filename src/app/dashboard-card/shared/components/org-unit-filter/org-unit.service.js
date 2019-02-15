@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import 'rxjs/Rx';
+import 'rxjs';
 import { Observable } from 'rxjs';
 export var OrgUnitService = (function () {
     function OrgUnitService(http) {

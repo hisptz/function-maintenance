@@ -1,58 +1,75 @@
-import {Injectable} from '@angular/core';
-import {Http, Response} from '@angular/http';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import {PREDEFINED_MENU_ITEMS} from './predifined-menu-items';
+import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+import { Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { PREDEFINED_MENU_ITEMS } from './predifined-menu-items';
 
 @Injectable()
 export class MenuService {
-
-  constructor(private http: Http) {
-  }
+  constructor(private http: Http) {}
 
   getSystemSettings(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
-      this.http.get(rootUrl + 'api/systemSettings.json')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
-        .subscribe((settings: any) => {
-          observer.next(settings);
-          observer.complete();
-        }, () => {
-          observer.next(null);
-          observer.complete();
-        });
+      this.http
+        .get(rootUrl + 'api/systemSettings.json')
+        .pipe(
+          map((response: Response) => response.json()),
+          catchError(this.handleError)
+        )
+        .subscribe(
+          (settings: any) => {
+            observer.next(settings);
+            observer.complete();
+          },
+          () => {
+            observer.next(null);
+            observer.complete();
+          }
+        );
     });
   }
 
   getUserInfo(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
-      this.http.get(rootUrl + 'api/me.json')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
-        .subscribe((userInfo: any) => {
-          observer.next(userInfo);
-          observer.complete();
-        }, () => {
-          observer.next(null);
-          observer.complete();
-        });
+      this.http
+        .get(rootUrl + 'api/me.json')
+        .pipe(
+          map((response: Response) => response.json()),
+          catchError(this.handleError)
+        )
+        .subscribe(
+          (userInfo: any) => {
+            observer.next(userInfo);
+            observer.complete();
+          },
+          () => {
+            observer.next(null);
+            observer.complete();
+          }
+        );
     });
   }
 
   getMenuModules(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
-      this.http.get(rootUrl + 'dhis-web-commons/menu/getModules.action')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
-        .subscribe((menuModuleResult: any) => {
-          observer.next(this._sanitizeMenuItems(menuModuleResult.modules, rootUrl));
-          observer.complete();
-        }, () => {
-          observer.next(null);
-          observer.complete();
-        });
+      this.http
+        .get(rootUrl + 'dhis-web-commons/menu/getModules.action')
+        .pipe(
+          map((response: Response) => response.json()),
+          catchError(this.handleError)
+        )
+        .subscribe(
+          (menuModuleResult: any) => {
+            observer.next(
+              this._sanitizeMenuItems(menuModuleResult.modules, rootUrl)
+            );
+            observer.complete();
+          },
+          () => {
+            observer.next(null);
+            observer.complete();
+          }
+        );
     });
   }
 
@@ -63,10 +80,13 @@ export class MenuService {
       errMsg = error.toString();
     } else {
       const newErrorObject: any = Object.assign({}, error);
-      let sanitizedError = newErrorObject.message ?
-        newErrorObject.message : newErrorObject._body ? newErrorObject._body : newErrorObject.toString();
+      let sanitizedError = newErrorObject.message
+        ? newErrorObject.message
+        : newErrorObject._body
+        ? newErrorObject._body
+        : newErrorObject.toString();
       try {
-        sanitizedError = (new Function('return ' + sanitizedError))();
+        sanitizedError = new Function('return ' + sanitizedError)();
         errMsg = sanitizedError.message;
       } catch (e) {
         errMsg = sanitizedError;
@@ -77,8 +97,11 @@ export class MenuService {
 
   private _sanitizeMenuItems(menuItems: any[], rootUrl: string): any {
     const sanitizedMenuItems = menuItems.map((item: any) => {
-      const newItem: any = {...item};
-      if (!newItem.hasOwnProperty('displayName') || newItem.displayName === '') {
+      const newItem: any = { ...item };
+      if (
+        !newItem.hasOwnProperty('displayName') ||
+        newItem.displayName === ''
+      ) {
         newItem.displayName = newItem.name;
       }
 
@@ -96,7 +119,7 @@ export class MenuService {
     });
 
     const predefinedMenuItems = PREDEFINED_MENU_ITEMS.map((item: any) => {
-      const newItem: any = {...item};
+      const newItem: any = { ...item };
 
       if (newItem.defaultAction) {
         newItem.defaultAction = rootUrl + newItem.defaultAction;
@@ -109,6 +132,4 @@ export class MenuService {
     });
     return [...sanitizedMenuItems, ...predefinedMenuItems];
   }
-
-
 }

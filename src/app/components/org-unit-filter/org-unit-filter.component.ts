@@ -1,7 +1,19 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewChecked} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  AfterViewChecked
+} from '@angular/core';
 import { Response, Http } from '@angular/http';
-import { TreeComponent, TREE_ACTIONS, IActionMapping } from 'angular-tree-component';
-import { Observable } from 'rxjs/Observable';
+import {
+  TreeComponent,
+  TREE_ACTIONS,
+  IActionMapping
+} from 'angular-tree-component';
+import { Observable } from 'rxjs';
 import { MultiselectComponent } from './multiselect/multiselect.component';
 import { OrgUnitService } from '../../services/org-unit.service';
 
@@ -12,7 +24,7 @@ import { OrgUnitService } from '../../services/org-unit.service';
 })
 export class OrgUnitFilterComponent implements OnInit {
   // the object that will carry the output value you can send one from outside to config start values
-  @Input() orgunit_model: any =  {
+  @Input() orgunit_model: any = {
     selection_mode: 'orgUnit',
     selected_levels: [],
     show_update_button: true,
@@ -28,8 +40,8 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // The organisation unit configuration object This will have to come from outside.
   @Input() orgunit_tree_config: any = {
-    show_search : true,
-    search_text : 'Search',
+    show_search: true,
+    search_text: 'Search',
     level: null,
     loading: true,
     loading_message: 'Loading Organisation units...',
@@ -63,22 +75,19 @@ export class OrgUnitFilterComponent implements OnInit {
   customTemplateStringOrgunitOptions: any;
 
   user_orgunits_types: Array<any> = [
-    {id: 'USER_ORGUNIT', name: 'User Admin Unit', shown: true},
-    {id: 'USER_ORGUNIT_CHILDREN', name: 'User sub-units', shown: true},
-    {id: 'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true}
+    { id: 'USER_ORGUNIT', name: 'User Admin Unit', shown: true },
+    { id: 'USER_ORGUNIT_CHILDREN', name: 'User sub-units', shown: true },
+    { id: 'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true }
   ];
-  constructor(
-    private http: Http,
-    private orgunitService: OrgUnitService
-  ) {
-     if (!this.orgunit_tree_config.hasOwnProperty('multiple_key')) {
-       this.orgunit_tree_config.multiple_key = 'none';
-     }
+  constructor(private http: Http, private orgunitService: OrgUnitService) {
+    if (!this.orgunit_tree_config.hasOwnProperty('multiple_key')) {
+      this.orgunit_tree_config.multiple_key = 'none';
+    }
   }
 
   updateModelOnSelect(data) {
     if (!this.orgunit_model.show_update_button) {
-      this.onOrgUnitUpdate.emit({name: 'ou', value: data.id});
+      this.onOrgUnitUpdate.emit({ name: 'ou', value: data.id });
       this.displayOrgTree();
     }
   }
@@ -88,12 +97,13 @@ export class OrgUnitFilterComponent implements OnInit {
         const actionMapping: IActionMapping = {
           mouse: {
             dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
-            click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+            click: (node, tree, $event) =>
+              TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
           }
         };
-        this.customTemplateStringOrgunitOptions = {actionMapping};
-
-      }else if (this.orgunit_tree_config.multiple_key === 'control') { // multselect using control key
+        this.customTemplateStringOrgunitOptions = { actionMapping };
+      } else if (this.orgunit_tree_config.multiple_key === 'control') {
+        // multselect using control key
         const actionMapping: IActionMapping = {
           mouse: {
             click: (node, tree, $event) => {
@@ -103,8 +113,9 @@ export class OrgUnitFilterComponent implements OnInit {
             }
           }
         };
-        this.customTemplateStringOrgunitOptions = {actionMapping};
-      }else if (this.orgunit_tree_config.multiple_key === 'shift') { // multselect using shift key
+        this.customTemplateStringOrgunitOptions = { actionMapping };
+      } else if (this.orgunit_tree_config.multiple_key === 'shift') {
+        // multselect using shift key
         const actionMapping: IActionMapping = {
           mouse: {
             click: (node, tree, $event) => {
@@ -114,121 +125,159 @@ export class OrgUnitFilterComponent implements OnInit {
             }
           }
         };
-        this.customTemplateStringOrgunitOptions = {actionMapping};
+        this.customTemplateStringOrgunitOptions = { actionMapping };
       }
-
-    }else {
+    } else {
       const actionMapping: IActionMapping = {
         mouse: {
           dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
-          click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+          click: (node, tree, $event) =>
+            TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
         }
       };
-      this.customTemplateStringOrgunitOptions = {actionMapping};
+      this.customTemplateStringOrgunitOptions = { actionMapping };
     }
 
-
     // if (this.orgunitService.nodes === null) {
-      this.orgunitService.getOrgunitLevelsInformation()
-        .subscribe(
-          (data: any) => {
-            // assign urgunit levels and groups to variables
-            this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
-            // setting organisation groups
-            this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-              this.orgunit_model.orgunit_groups = groups;
-            });
+    this.orgunitService.getOrgunitLevelsInformation().subscribe((data: any) => {
+      // assign urgunit levels and groups to variables
+      this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
+      // setting organisation groups
+      this.orgunitService.getOrgunitGroups().subscribe(groups => {
+        //noinspection TypeScriptUnresolvedVariable
+        this.orgunit_model.orgunit_groups = groups;
+      });
 
-            // identify currently logged in usser
-            this.orgunitService.getUserInformation(this.orgunit_model.type).subscribe(
-              userOrgunit => {
-                const level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
-                this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                if (this.orgunit_model.selection_mode === 'orgUnit') {
-                  this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
-                }
-                const all_levels = data.pager.total;
-                const orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
-                const use_level = parseInt(all_levels) - (parseInt(level) - 1);
-                // load inital orgiunits to speed up loading speed
-                this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
-                  (initial_data) => {
-                    this.organisationunits = initial_data;
-                    this.orgunit_tree_config.loading = false;
-                    // a hack to make sure the user orgunit is not triggered on the first time
-                    this.initial_usr_orgunit = [{id: 'USER_ORGUNIT', name: 'User org unit'}];
-                    // after done loading initial organisation units now load all organisation units
-                    const fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
-                    this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
-                      items => {
-                        items[0].expanded = true;
-                        this.organisationunits = items;
-                        // activate organisation units
-                        for (const active_orgunit of this.orgunit_model.selected_orgunits) {
-                          this.activateNode(active_orgunit.id, this.orgtree, true);
-                        }
-                        // backup to make sure that always there is default organisation unit
-                        if (this.orgunit_model.selected_orgunits.length === 0) {
-                          for (const active_orgunit of this.orgunit_model.user_orgunits) {
-                            this.activateNode(active_orgunit.id, this.orgtree, true);
-                          }
-                        }
-                        this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-                        setTimeout(()=>{
-                          //this.activateOrgData(this.organisationunits[0]);
-                          this.showOrgTree = false;
-                          this.updateOrgunits();
-                        })
-                      },
-                      error => {
-                        console.log('something went wrong while fetching Organisation units');
-                        this.orgunit_tree_config.loading = false;
+      // identify currently logged in usser
+      this.orgunitService
+        .getUserInformation(this.orgunit_model.type)
+        .subscribe(userOrgunit => {
+          const level = this.orgunitService.getUserHighestOrgUnitlevel(
+            userOrgunit
+          );
+          this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits(
+            userOrgunit
+          );
+          this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits(
+            userOrgunit
+          );
+          if (this.orgunit_model.selection_mode === 'orgUnit') {
+            this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
+          }
+          const all_levels = data.pager.total;
+          const orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel(
+            level,
+            userOrgunit
+          );
+          const use_level = parseInt(all_levels) - (parseInt(level) - 1);
+          // load inital orgiunits to speed up loading speed
+          this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
+            initial_data => {
+              this.organisationunits = initial_data;
+              this.orgunit_tree_config.loading = false;
+              // a hack to make sure the user orgunit is not triggered on the first time
+              this.initial_usr_orgunit = [
+                { id: 'USER_ORGUNIT', name: 'User org unit' }
+              ];
+              // after done loading initial organisation units now load all organisation units
+              const fields = this.orgunitService.generateUrlBasedOnLevels(
+                use_level
+              );
+              this.orgunitService
+                .getAllOrgunitsForTree1(fields, orgunits)
+                .subscribe(
+                  items => {
+                    items[0].expanded = true;
+                    this.organisationunits = items;
+                    // activate organisation units
+                    for (const active_orgunit of this.orgunit_model
+                      .selected_orgunits) {
+                      this.activateNode(active_orgunit.id, this.orgtree, true);
+                    }
+                    // backup to make sure that always there is default organisation unit
+                    if (this.orgunit_model.selected_orgunits.length === 0) {
+                      for (const active_orgunit of this.orgunit_model
+                        .user_orgunits) {
+                        this.activateNode(
+                          active_orgunit.id,
+                          this.orgtree,
+                          true
+                        );
                       }
+                    }
+                    this.prepareOrganisationUnitTree(
+                      this.organisationunits,
+                      'parent'
                     );
+                    setTimeout(() => {
+                      //this.activateOrgData(this.organisationunits[0]);
+                      this.showOrgTree = false;
+                      this.updateOrgunits();
+                    });
                   },
                   error => {
-                    console.log('something went wrong while fetching Organisation units');
+                    console.log(
+                      'something went wrong while fetching Organisation units'
+                    );
                     this.orgunit_tree_config.loading = false;
                   }
                 );
-
-              }
-            );
-          }
-        );
+            },
+            error => {
+              console.log(
+                'something went wrong while fetching Organisation units'
+              );
+              this.orgunit_tree_config.loading = false;
+            }
+          );
+        });
+    });
   }
 
-  selectedOrgUnits = []
-  setOneOrgUnit(){
-    if(this.orgunit_model.selected_orgunits.length == 0){
-      this.orgunit_model.selected_orgunits = [{name:this.organisationunits[0].name,id:this.organisationunits[0].id,level:this.organisationunits[0].level}];
-    }else{
-      this.orgunit_model.selected_orgunits = [this.orgunit_model.selected_orgunits[0]];
+  selectedOrgUnits = [];
+  setOneOrgUnit() {
+    if (this.orgunit_model.selected_orgunits.length == 0) {
+      this.orgunit_model.selected_orgunits = [
+        {
+          name: this.organisationunits[0].name,
+          id: this.organisationunits[0].id,
+          level: this.organisationunits[0].level
+        }
+      ];
+    } else {
+      this.orgunit_model.selected_orgunits = [
+        this.orgunit_model.selected_orgunits[0]
+      ];
     }
     //
     //this.orgunit_model.selected_orgunits = this.selectedOrgUnits;
   }
-  setMultipleOrgUnits(){
-    if(this.orgunit_model.selected_orgunits.length == 0){
-      console.log("Here1:",this.organisationunits);
-      this.orgunit_model.selected_orgunits.push({name:this.organisationunits[0].name,id:this.organisationunits[0].id,level:this.organisationunits[0].level})
-    }else{
-
+  setMultipleOrgUnits() {
+    if (this.orgunit_model.selected_orgunits.length == 0) {
+      console.log('Here1:', this.organisationunits);
+      this.orgunit_model.selected_orgunits.push({
+        name: this.organisationunits[0].name,
+        id: this.organisationunits[0].id,
+        level: this.organisationunits[0].level
+      });
+    } else {
     }
-    this.orgunit_model.selected_orgunits = this.getOrgUnitsObjectForAnalytics(this.orgunit_model, true);
+    this.orgunit_model.selected_orgunits = this.getOrgUnitsObjectForAnalytics(
+      this.orgunit_model,
+      true
+    );
     //
   }
-  setNoOrgUnits(){
+  setNoOrgUnits() {
     this.orgunit_model.selected_orgunits = [];
     //
   }
-  getSelectedOrgUnits(){
+  getSelectedOrgUnits() {
     let ou = [];
-    this.orgunit_model.selected_orgunits.forEach((orgUnit)=>{
-      ou.push(orgUnit.id)
-    })
-    return ou.join(";")
+    this.orgunit_model.selected_orgunits.forEach(orgUnit => {
+      ou.push(orgUnit.id);
+    });
+    return ou.join(';');
   }
   updateOrgunits() {
     this.displayOrgTree();
@@ -244,13 +293,13 @@ export class OrgUnitFilterComponent implements OnInit {
 
   setType(type: string) {
     this.orgunit_model.selection_mode = type;
-    if ( type !== 'orgUnit' ) {
+    if (type !== 'orgUnit') {
       this.orgunit_model.selected_user_orgunit = [];
     }
-    if ( type !== 'Level' ) {
+    if (type !== 'Level') {
       this.orgunit_model.selected_levels = [];
     }
-    if ( type !== 'Group' ) {
+    if (type !== 'Group') {
       this.orgunit_model.selected_groups = [];
     }
   }
@@ -259,14 +308,13 @@ export class OrgUnitFilterComponent implements OnInit {
     this.showOrgTree = !this.showOrgTree;
   }
   filterNodes(value, tree) {
-    tree.treeModel.filterNodes((node) => {
+    tree.treeModel.filterNodes(node => {
       return !node.data.name.startsWith(value);
     });
   }
 
   activateNode(nodeId: any, nodes, first) {
-    if(nodes)
-    {
+    if (nodes) {
       const node = nodes.treeModel.getNodeById(nodeId);
       if (node) {
         node.setIsActive(true, true);
@@ -279,14 +327,13 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // a method to activate the model
   deActivateNode(nodeId: any, nodes, event) {
-    if(nodes)
-    {
+    if (nodes) {
       const node = nodes.treeModel.getNodeById(nodeId);
       if (node) {
         node.setIsActive(false, true);
       }
     }
-    if ( event !== null) {
+    if (event !== null) {
       event.stopPropagation();
     }
   }
@@ -294,8 +341,8 @@ export class OrgUnitFilterComponent implements OnInit {
   // check if orgunit already exist in the orgunit display list
   checkOrgunitAvailabilty(orgunit, array): boolean {
     let checker = false;
-    array.forEach((value) => {
-      if ( value.id === orgunit.id ) {
+    array.forEach(value => {
+      if (value.id === orgunit.id) {
         checker = true;
       }
     });
@@ -303,14 +350,14 @@ export class OrgUnitFilterComponent implements OnInit {
   }
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivateOrg ( $event ) {
+  deactivateOrg($event) {
     this.period_selector.reset();
     if (this.orgunit_model.selection_mode === 'orgUnit') {
       this.orgunit_model.selection_mode = 'orgUnit';
       this.period_selector.reset();
     }
     this.orgunit_model.selected_orgunits.forEach((item, index) => {
-      if ( $event.node.data.id === item.id ) {
+      if ($event.node.data.id === item.id) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
@@ -321,17 +368,19 @@ export class OrgUnitFilterComponent implements OnInit {
   }
 
   // add item to array of selected items when item is selected
-  activateOrg = ($event) => {
+  activateOrg = $event => {
     this.period_selector.reset();
-    this.activateOrgData($event.node.data)
-  }
-  activateOrgData(data){
+    this.activateOrgData($event.node.data);
+  };
+  activateOrgData(data) {
     if (this.orgunit_model.selection_mode === 'orgUnit') {
       this.orgunit_model.selection_mode = 'orgUnit';
       this.period_selector.reset();
     }
     this.selected_orgunits = [data];
-    if (!this.checkOrgunitAvailabilty(data, this.orgunit_model.selected_orgunits)) {
+    if (
+      !this.checkOrgunitAvailabilty(data, this.orgunit_model.selected_orgunits)
+    ) {
       this.orgunit_model.selected_orgunits.push(data);
     }
     this.orgUnit = data;
@@ -359,31 +408,31 @@ export class OrgUnitFilterComponent implements OnInit {
         value: this.getOrgUnitsForAnalytics(this.orgunit_model, false)
       });
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
-    }else {
+    } else {
       this.onOrgUnitChange.emit({
         starting_name: this.getProperPreOrgunitName(),
         arrayed_org_units: arrayed_org_units,
         items: this.orgunit_model.selected_orgunits,
         name: 'ou',
-        value: this.getOrgUnitsForAnalytics(this.orgunit_model, false)});
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model, false)
+      });
     }
   }
 
-
   // set selected groups
-  setSelectedGroups( selected_groups ) {
+  setSelectedGroups(selected_groups) {
     this.orgunit_model.selected_groups = selected_groups;
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   // set selected groups
-  setSelectedUserOrg( selected_user_orgunit ) {
+  setSelectedUserOrg(selected_user_orgunit) {
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
     this.emit(false);
   }
 
   // set selected groups
-  setSelectedLevels( selected_levels ) {
+  setSelectedLevels(selected_levels) {
     this.orgunit_model.selected_levels = selected_levels;
     this.emit(false);
   }
@@ -401,12 +450,12 @@ export class OrgUnitFilterComponent implements OnInit {
           // a must be equal to b
           return 0;
         });
-        organisationUnit.children.forEach((child) => {
+        organisationUnit.children.forEach(child => {
           this.prepareOrganisationUnitTree(child, 'top');
         });
       }
-    }else {
-      organisationUnit.forEach((orgunit) => {
+    } else {
+      organisationUnit.forEach(orgunit => {
         if (orgunit.children) {
           orgunit.children.sort((a, b) => {
             if (a.name > b.name) {
@@ -418,7 +467,7 @@ export class OrgUnitFilterComponent implements OnInit {
             // a must be equal to b
             return 0;
           });
-          orgunit.children.forEach((child) => {
+          orgunit.children.forEach(child => {
             this.prepareOrganisationUnitTree(child, 'top');
           });
         }
@@ -429,13 +478,28 @@ export class OrgUnitFilterComponent implements OnInit {
   // prepare a proper name for updating the organisation unit display area.
   getProperPreOrgunitName(): string {
     let name = '';
-    if ( this.orgunit_model.selection_mode === 'Group' ) {
-      name = (this.orgunit_model.selected_groups.length === 0) ? '' : this.orgunit_model.selected_groups.map((group) => group.name).join(', ') + ' in';
-    }else if ( this.orgunit_model.selected_user_orgunit.length !== 0 ) {
-      name = (this.orgunit_model.selected_user_orgunit.length === 0) ? '' : this.orgunit_model.selected_user_orgunit.map((level) => level.name).join(', ');
-    }else if ( this.orgunit_model.selection_mode === 'Level' ) {
-      name = (this.orgunit_model.selected_levels.length === 0) ? '' : this.orgunit_model.selected_levels.map((level) => level.name).join(', ') + ' in';
-    }else {
+    if (this.orgunit_model.selection_mode === 'Group') {
+      name =
+        this.orgunit_model.selected_groups.length === 0
+          ? ''
+          : this.orgunit_model.selected_groups
+              .map(group => group.name)
+              .join(', ') + ' in';
+    } else if (this.orgunit_model.selected_user_orgunit.length !== 0) {
+      name =
+        this.orgunit_model.selected_user_orgunit.length === 0
+          ? ''
+          : this.orgunit_model.selected_user_orgunit
+              .map(level => level.name)
+              .join(', ');
+    } else if (this.orgunit_model.selection_mode === 'Level') {
+      name =
+        this.orgunit_model.selected_levels.length === 0
+          ? ''
+          : this.orgunit_model.selected_levels
+              .map(level => level.name)
+              .join(', ') + ' in';
+    } else {
       name = '';
     }
     return name;
@@ -451,34 +515,37 @@ export class OrgUnitFilterComponent implements OnInit {
   getOrgUnitsForAnalytics(orgunit_model: any, with_children: boolean): string {
     const orgUnits = [];
     let organisation_unit_analytics_string = '';
-    if ( orgunit_model.selected_user_orgunit.length !== 0 ) {
-        orgunit_model.selected_user_orgunit.forEach((orgunit) => {
-          organisation_unit_analytics_string += orgunit.id + ';';
-        });
-    }else {
+    if (orgunit_model.selected_user_orgunit.length !== 0) {
+      orgunit_model.selected_user_orgunit.forEach(orgunit => {
+        organisation_unit_analytics_string += orgunit.id + ';';
+      });
+    } else {
       // if there is only one organisation unit selected
-      if ( orgunit_model.selected_orgunits.length === 1 ) {
-        const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+      if (orgunit_model.selected_orgunits.length === 1) {
+        const detailed_orgunit = this.orgtree.treeModel.getNodeById(
+          orgunit_model.selected_orgunits[0].id
+        );
         orgUnits.push(detailed_orgunit.id);
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
-          for ( const orgunit of detailed_orgunit.children ) {
+          for (const orgunit of detailed_orgunit.children) {
             orgUnits.push(orgunit.id);
           }
         }
-
-      }else {
-        orgunit_model.selected_orgunits.forEach((orgunit) => { // If there is more than one organisation unit selected
+      } else {
+        orgunit_model.selected_orgunits.forEach(orgunit => {
+          // If there is more than one organisation unit selected
           orgUnits.push(orgunit.id);
         });
       }
       if (orgunit_model.selection_mode === 'orgUnit') {
-
-      }if (orgunit_model.selection_mode === 'Level') {
-        orgunit_model.selected_levels.forEach((level) => {
+      }
+      if (orgunit_model.selection_mode === 'Level') {
+        orgunit_model.selected_levels.forEach(level => {
           organisation_unit_analytics_string += 'LEVEL-' + level.level + ';';
         });
-      }if (orgunit_model.selection_mode === 'Group') {
-        orgunit_model.selected_groups.forEach((group) => {
+      }
+      if (orgunit_model.selection_mode === 'Group') {
+        orgunit_model.selected_groups.forEach(group => {
           organisation_unit_analytics_string += 'OU_GROUP-' + group.id + ';';
         });
       }
@@ -489,40 +556,49 @@ export class OrgUnitFilterComponent implements OnInit {
   getOrgUnitsObjectForAnalytics(orgunit_model: any, with_children: boolean) {
     const orgUnits = [];
     let organisation_unit_analytics_string = '';
-    if ( orgunit_model.selected_user_orgunit.length !== 0 ) {
-      orgunit_model.selected_user_orgunit.forEach((orgunit) => {
+    if (orgunit_model.selected_user_orgunit.length !== 0) {
+      orgunit_model.selected_user_orgunit.forEach(orgunit => {
         orgUnits.push(orgunit);
       });
-    }else {
+    } else {
       // if there is only one organisation unit selected
-      if ( orgunit_model.selected_orgunits.length === 1 ) {
-        const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
-        orgUnits.push({level:detailed_orgunit.level,name:detailed_orgunit.data.name,id:detailed_orgunit.id});
+      if (orgunit_model.selected_orgunits.length === 1) {
+        const detailed_orgunit = this.orgtree.treeModel.getNodeById(
+          orgunit_model.selected_orgunits[0].id
+        );
+        orgUnits.push({
+          level: detailed_orgunit.level,
+          name: detailed_orgunit.data.name,
+          id: detailed_orgunit.id
+        });
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
-          for ( const orgunit of detailed_orgunit.children ) {
-            orgUnits.push({level:orgunit.level,name:orgunit.data.name,id:orgunit.id});
+          for (const orgunit of detailed_orgunit.children) {
+            orgUnits.push({
+              level: orgunit.level,
+              name: orgunit.data.name,
+              id: orgunit.id
+            });
           }
         }
-
-      }else {
-        orgunit_model.selected_orgunits.forEach((orgunit) => { // If there is more than one organisation unit selected
+      } else {
+        orgunit_model.selected_orgunits.forEach(orgunit => {
+          // If there is more than one organisation unit selected
           orgUnits.push(orgunit);
         });
       }
       if (orgunit_model.selection_mode === 'orgUnit') {
-
-      }if (orgunit_model.selection_mode === 'Level') {
-        orgunit_model.selected_levels.forEach((level) => {
+      }
+      if (orgunit_model.selection_mode === 'Level') {
+        orgunit_model.selected_levels.forEach(level => {
           organisation_unit_analytics_string += 'LEVEL-' + level.level + ';';
         });
-      }if (orgunit_model.selection_mode === 'Group') {
-        orgunit_model.selected_groups.forEach((group) => {
+      }
+      if (orgunit_model.selection_mode === 'Group') {
+        orgunit_model.selected_groups.forEach(group => {
           organisation_unit_analytics_string += 'OU_GROUP-' + group.id + ';';
         });
       }
     }
     return orgUnits;
   }
-
-
 }

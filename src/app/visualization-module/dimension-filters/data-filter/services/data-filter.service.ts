@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { of } from 'rxjs/observable/of';
+import { Observable, of, forkJoin } from 'rxjs';
 import * as _ from 'lodash';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -12,7 +10,6 @@ import { CategoryCombo } from '../model/category-combo';
 import { Indicator } from '../model/indicator';
 import { DataElement } from '../model/data-element';
 import { HttpClientService } from '../../../core';
-
 
 export const DATAELEMENT_KEY = 'data-elements';
 export const DATASET_KEY = 'data-sets';
@@ -27,7 +24,6 @@ export const FUNCTIONS = 'functions';
 
 @Injectable()
 export class DataFilterService {
-
   metaData = {
     organisationUnits: [],
     dataElements: [],
@@ -41,67 +37,87 @@ export class DataFilterService {
 
   private _dataItems: any[] = [];
 
-  constructor(private http: HttpClientService) {
-  }
+  constructor(private http: HttpClientService) {}
 
   getIndicators(): Observable<Indicator[]> {
-    return this.http.get('indicators.json?fields=id,name,dataSets[periodType]&paging=false').
-      pipe(map((res:any) => res.indicators || []));
+    return this.http
+      .get('indicators.json?fields=id,name,dataSets[periodType]&paging=false')
+      .pipe(map((res: any) => res.indicators || []));
   }
 
   getDataElements(): Observable<DataElement[]> {
-    return this.http.get('dataElements.json?fields=,id,name,valueType,categoryCombo&paging=false&filter=' +
-      'domainType:eq:AGGREGATE&filter=valueType:ne:TEXT&filter=valueType:ne:LONG_TEXT').
-      pipe(map((res:any) => res.dataElements || []));
+    return this.http
+      .get(
+        'dataElements.json?fields=,id,name,valueType,categoryCombo&paging=false&filter=' +
+          'domainType:eq:AGGREGATE&filter=valueType:ne:TEXT&filter=valueType:ne:LONG_TEXT'
+      )
+      .pipe(map((res: any) => res.dataElements || []));
   }
 
   getDataSets(): Observable<DataSet[]> {
-    return this.http.get('dataSets.json?paging=false&fields=id,name').pipe(map((res:any) => res.dataSets || []));
+    return this.http
+      .get('dataSets.json?paging=false&fields=id,name')
+      .pipe(map((res: any) => res.dataSets || []));
   }
 
   getCategoryCombos(): Observable<CategoryCombo[]> {
-    return this.http.get('categoryCombos.json?fields=id,name,categoryOptionCombos[id,name]&paging=false').pipe(
-      map((res:any) => res.categoryCombos || []));
-
+    return this.http
+      .get(
+        'categoryCombos.json?fields=id,name,categoryOptionCombos[id,name]&paging=false'
+      )
+      .pipe(map((res: any) => res.categoryCombos || []));
   }
 
   getOrganisationUnits(): Observable<any[]> {
-    return this.http.get('organisationUnits.json?fields=id,name,children,parent,path&paging=false').pipe(
-      map((res:any) => res.organisationUnits || []));
+    return this.http
+      .get(
+        'organisationUnits.json?fields=id,name,children,parent,path&paging=false'
+      )
+      .pipe(map((res: any) => res.organisationUnits || []));
   }
 
   getDataElementGroups(): Observable<DataelementGroup[]> {
-    return this.http.get('dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name,categoryCombo]').pipe(
-      map((res:any) => res.dataElementGroups || []));
+    return this.http
+      .get(
+        'dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name,categoryCombo]'
+      )
+      .pipe(map((res: any) => res.dataElementGroups || []));
   }
 
   getIndicatorGroups(): Observable<IndicatorGroup[]> {
-    return this.http.get('indicatorGroups.json?paging=false&fields=id,name,indicators[id,name]').
-      pipe(map((res:any) => res.indicatorGroups || []));
+    return this.http
+      .get(
+        'indicatorGroups.json?paging=false&fields=id,name,indicators[id,name]'
+      )
+      .pipe(map((res: any) => res.indicatorGroups || []));
   }
 
   getPrograms(): Observable<any[]> {
-    return this.http.get('programs.json?paging=false&fields=id,name,programType,programIndicators[id,name').
-      pipe(map((res:any) => res.programs || []));
-
+    return this.http
+      .get(
+        'programs.json?paging=false&fields=id,name,programType,programIndicators[id,name'
+      )
+      .pipe(map((res: any) => res.programs || []));
   }
 
   getProgramIndicators(): Observable<any[]> {
-    return this.http.get('programIndicators.json?paging=false&fields=id,name').pipe(
-      map((res:any) => res.programIndicators || []));
+    return this.http
+      .get('programIndicators.json?paging=false&fields=id,name')
+      .pipe(map((res: any) => res.programIndicators || []));
   }
 
   getFunctions(): Observable<any> {
     return this.http.get('dataStore/functions').pipe(
-      switchMap((functionIds: Array<string>) => forkJoin(_.map(functionIds,
-        (functionId: string) => this.http.get('dataStore/functions/' + functionId))).pipe(
-        catchError(() => of([]))
-      )),
+      switchMap((functionIds: Array<string>) =>
+        forkJoin(
+          _.map(functionIds, (functionId: string) =>
+            this.http.get('dataStore/functions/' + functionId)
+          )
+        ).pipe(catchError(() => of([])))
+      ),
       catchError(() => of([]))
-    )
-      ;
+    );
   }
-
 
   initiateData() {
     return Observable.create(observer => {
@@ -126,7 +142,6 @@ export class DataFilterService {
         });
       }
     });
-
   }
 
   /**
@@ -171,16 +186,14 @@ export class DataFilterService {
         default:
           console.error('The key passed is not recognized');
           break;
-
       }
       dataStream$.subscribe(
-        (data) => {
+        data => {
           observer.next(data);
           observer.complete();
-        }, (error) => observer.error(error)
+        },
+        error => observer.error(error)
       );
     });
   }
-
-
 }
