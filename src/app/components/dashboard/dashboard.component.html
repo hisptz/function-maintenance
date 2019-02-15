@@ -1,0 +1,11 @@
+<div *ngIf="!results && !loadingError" style="text-align: center" >
+  <img src="assets/img/balls-3.svg" alt=""> <br/>
+  {{progress}}%
+</div>
+<div *ngIf="results && showResult" class="card panel-default">
+  <app-visualization-card [visualizationLayers]="layers" [fn]="func"></app-visualization-card>
+
+  </div>
+<div *ngIf="loadingError" class="alert alert-danger" role="alert">
+  {{loadingError.message}}
+</div>

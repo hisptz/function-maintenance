@@ -1,0 +1,130 @@
+<div
+  class="visualization-card"
+  [style.height]="visualizationUiConfig?.cardHeight">
+  <!--Visualization card header content-->
+  <div class="visualization-card-header">
+    <div class="visualization-card-header-left">
+      <div
+        class="visualization-filter-section-container">
+        <app-visualization-filter-section
+          [fn]="fn"
+          [loaded]="true"
+          (onFilterUpdate)="onVisualizationFilterUpdate($event)"
+          (onLayoutUpdate)="onVisualizationLayoutUpdate($event)"
+        ></app-visualization-filter-section>
+      </div>
+      <div
+        class="visualization-interpretation-button-container"
+        *ngIf="visualizationUiConfig?.showChatButton"
+      >
+        chat
+      </div>
+    </div>
+    <div class="visualization-card-header-right">
+      <!--resize-->
+    </div>
+  </div>
+  <!--End of Visualization card header content-->
+
+  <!--Visualization loading block-->
+  <div class="visualization-card-loading-block" *ngIf="visualizationLoading">
+    loading....
+  </div>
+  <!--End of Visualization loading block-->
+
+  <!--Visualization card body content-->
+  <div class="visualization-card-body" *ngIf="visualizationLoaded">
+    <div class="visualization-block" [style.flex]="'2'">
+      <!--chart block-->
+      <div class="chart-container" *ngIf="visualizationType === 'CHART'">
+        <app-chart-list
+          [visualizationLayers]="visualizationLayers"
+          [chartHeight]="visualizationUiConfig.itemHeight"
+        ></app-chart-list>
+      </div>
+      <!--end of chart block-->
+
+      <!--table block-->
+      <div
+        class="table-container-block"
+        [style.height]="visualizationUiConfig.cardHeight"
+        *ngIf="visualizationType === 'TABLE'">
+        <app-table-list
+          [visualizationLayers]="visualizationLayers"
+        ></app-table-list>
+      </div>
+      <!--end of table block-->
+
+      <!--map block-->
+      <div
+        class="map-container"
+        *ngIf="visualizationType === 'MAP'">
+        MAP
+      </div>
+      <!--end of map-block-->
+
+      <!-- users block -->
+      <div
+        class="users-container-block"
+        *ngIf="visualizationType === 'USERS'">
+        USERS
+      </div>
+      <!-- end of users block -->
+
+      <!-- resources block -->
+      <div
+        class="resources-container-block"
+        *ngIf="visualizationType === 'RESOURCES'">
+        RESOURCES
+      </div>
+      <!-- end of resources block -->
+
+      <!-- resources block -->
+      <div
+        class="resources-container-block"
+        *ngIf="visualizationType === 'REPORTS'">
+        REPORTS
+      </div>
+      <!-- end of resources block -->
+
+      <!-- app block -->
+      <div
+        class="app-container-block"
+        *ngIf="visualizationType === 'APP'">
+        APP
+      </div>
+      <!-- end of app block -->
+
+      <!--dictionary block-->
+      <div
+        class="dictionary-container"
+        [style.height]="visualizationUiConfig.cardHeight"
+        *ngIf="visualizationType === 'INFO'">
+        DICTIONARY
+      </div>
+      <!--end of dictionary block-->
+    </div>
+    <!--interpretation section-->
+    <div
+      class="visualization-interpretation"
+      *ngIf="visualizationUiConfig.showInterpretationBlock">
+      INTERPRETATION
+    </div>
+    <!--end of interpretation section-->
+  </div>
+  <!--End of Visualization card body content-->
+
+  <!--Visualization card footer content-->
+  <div class="visualization-card-footer">
+    <div class="visualization-card-footer-left animated fadeInLeft">
+      <app-visualization-types-section
+        [currentVisualization]="visualizationType"
+        (onCurrentVisualizationChange)="currentVisualizationChange($event)"
+      ></app-visualization-types-section>
+    </div>
+    <div class="visualization-card-footer-right">
+      <!--delete-->
+    </div>
+  </div>
+  <!--End of Visualization card footer content-->
+</div>

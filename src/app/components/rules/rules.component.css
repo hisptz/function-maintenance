@@ -1,0 +1,11 @@
+.selected-rule {
+  color: #31708f;
+  background-color: #d9edf7 !important;
+  border-color: #bce8f1;
+}
+.tooltip-class{
+  max-width: 0;
+}
+.tooltip-class .popover-content{
+  max-width: none;
+}
