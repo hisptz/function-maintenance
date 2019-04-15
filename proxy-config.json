@@ -1,24 +1,24 @@
 {
   "/api": {
-    "target2": "https://play.dhis2.org/2.29",
-    "target": "https://test.hisptz.org/dev",
+    "target": "https://play.dhis2.org/2.29",
+    "target2": "https://test.hisptz.org/dev",
     "target1": "https://scorecard-dev.dhis2.org/dev",
     "secure": "false",
     "auth1": "rmkomwa:Bottleneck@2018",
-    "auth": "rajabumkomwa:W00d9mph@1992",
+    "auth2": "rajabumkomwa:W00d9mph@1992",
     "auth3": "system:System123",
-    "auth2": "admin:district",
+    "auth": "admin:district",
     "changeOrigin": "true"
   },
   "/": {
-    "target2": "https://play.dhis2.org/2.29",
-    "target": "https://test.hisptz.org/dev",
+    "target": "https://play.dhis2.org/2.29",
+    "target2": "https://test.hisptz.org/dev",
     "target1": "https://scorecard-dev.dhis2.org/dev",
     "secure": "false",
     "auth1": "rmkomwa:Bottleneck@2018",
-    "auth": "rajabumkomwa:W00d9mph@1992",
+    "auth2": "rajabumkomwa:W00d9mph@1992",
     "auth3": "system:System123",
-    "auth2": "admin:district",
+    "auth": "admin:district",
     "changeOrigin": "true"
   }
 }
