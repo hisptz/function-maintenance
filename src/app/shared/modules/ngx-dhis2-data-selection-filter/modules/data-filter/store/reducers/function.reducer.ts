@@ -41,7 +41,7 @@ export function reducer(state = initialState, action: FunctionActions): State {
     }
 
     case FunctionActionTypes.UpsertFunction: {
-      return adapter.upsertOne(action.payload.function, state);
+      return adapter.upsertOne(action.functionObject, state);
     }
 
     case FunctionActionTypes.AddFunctions: {
@@ -109,6 +109,30 @@ export function reducer(state = initialState, action: FunctionActions): State {
       return activeFunctionId !== ''
         ? adapter.updateOne(
             { id: activeFunctionId, changes: { simulating: false } },
+            state
+          )
+        : state;
+    }
+
+    case FunctionActionTypes.SaveFunction: {
+      return action.functionObject
+        ? adapter.updateOne(
+            {
+              id: action.functionObject.id,
+              changes: { ...action.functionObject, saving: true }
+            },
+            state
+          )
+        : state;
+    }
+
+    case FunctionActionTypes.SaveFunctionSuccess: {
+      return action.functionObject
+        ? adapter.updateOne(
+            {
+              id: action.functionObject.id,
+              changes: { ...action.functionObject, saving: false }
+            },
             state
           )
         : state;

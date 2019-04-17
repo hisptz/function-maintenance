@@ -1,0 +1,24 @@
+{
+  "/api": {
+    "target": "https://play.dhis2.org/2.29",
+    "target2": "https://test.hisptz.org/dev",
+    "target1": "https://scorecard-dev.dhis2.org/dev",
+    "secure": "false",
+    "auth1": "rmkomwa:Bottleneck@2018",
+    "auth2": "rajabumkomwa:W00d9mph@1992",
+    "auth3": "system:System123",
+    "auth": "admin:district",
+    "changeOrigin": "true"
+  },
+  "/": {
+    "target": "https://play.dhis2.org/2.29",
+    "target2": "https://test.hisptz.org/dev",
+    "target1": "https://scorecard-dev.dhis2.org/dev",
+    "secure": "false",
+    "auth1": "rmkomwa:Bottleneck@2018",
+    "auth2": "rajabumkomwa:W00d9mph@1992",
+    "auth3": "system:System123",
+    "auth": "admin:district",
+    "changeOrigin": "true"
+  }
+}

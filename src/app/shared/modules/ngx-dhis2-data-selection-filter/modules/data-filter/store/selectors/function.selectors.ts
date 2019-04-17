@@ -32,7 +32,10 @@ export const getActiveFunction = createSelector(
     functionEntities[activeFunctionId]
 );
 
-export const getFunctions = (ruleKeyName?: string) =>
+export const getFunctions = (
+  onlyRuleIds: boolean = false,
+  ruleKeyName?: string
+) =>
   createSelector(
     fromFunction.getAllFunctions,
     fromFunctionRuleReducer.getFunctionRuleEntities,
@@ -48,24 +51,26 @@ export const getFunctions = (ruleKeyName?: string) =>
               id: functionObject.id,
               name: functionObject.name,
               active: functionObject.id === activeFunctionId,
-              [ruleKeyName || 'items']: _.filter(
-                _.map(functionObject.rules || [], ruleId => {
-                  const functionRule = functionRuleEntities[ruleId];
-                  return functionRule
-                    ? {
-                        id: functionRule.id,
-                        name: functionRule.name,
-                        ruleDefinition: functionRule,
-                        functionObject: {
-                          id: functionObject.id,
-                          functionString: functionObject.function
-                        },
-                        type: 'FUNCTION_RULE'
-                      }
-                    : null;
-                }),
-                functionRule => functionRule
-              )
+              [ruleKeyName || 'items']: onlyRuleIds
+                ? functionObject.rules
+                : _.filter(
+                    _.map(functionObject.rules || [], ruleId => {
+                      const functionRule = functionRuleEntities[ruleId];
+                      return functionRule
+                        ? {
+                            id: functionRule.id,
+                            name: functionRule.name,
+                            ruleDefinition: functionRule,
+                            functionObject: {
+                              id: functionObject.id,
+                              functionString: functionObject.function
+                            },
+                            type: 'FUNCTION_RULE'
+                          }
+                        : null;
+                    }),
+                    functionRule => functionRule
+                  )
             }
           : null;
       })
@@ -74,13 +79,33 @@ export const getFunctions = (ruleKeyName?: string) =>
 export const getFunctionById = functionId =>
   createSelector(
     fromFunction.getFunctionEntities,
-    (functionEntities: any) => functionEntities[functionId]
+    fromFunctionRuleReducer.getFunctionRuleEntities,
+    (functionEntities: any, functionRuleEntities: any) => {
+      const functionObject = functionEntities[functionId];
+      return functionObject && functionRuleEntities
+        ? {
+            ...functionObject,
+            rules: (functionObject.rules || []).map(
+              (ruleId: string) => functionRuleEntities[ruleId]
+            )
+          }
+        : null;
+    }
   );
 
 export const getSelectedFunctions = createSelector(
   fromFunction.getAllFunctions,
   fromFunctionRuleReducer.getFunctionRuleEntities,
-  (functionList: fromModels.FunctionObject[], functionRuleEntities: any) => {
+  getFunctionLoadedStatus,
+  (
+    functionList: fromModels.FunctionObject[],
+    functionRuleEntities: any,
+    functionLoaded: boolean
+  ) => {
+    if (!functionLoaded) {
+      return [];
+    }
+
     return functionList.length > 0 && _.keys(functionRuleEntities).length > 0
       ? _.filter(
           _.map(
@@ -98,14 +123,13 @@ export const getSelectedFunctions = createSelector(
                         selectedFunction.rules || [],
                         ruleId => functionRuleEntities[ruleId]
                       ),
-                      functionRule =>
-                        functionRule !== null && functionRule.selected
+                      functionRule => functionRule && functionRule.selected
                     )
                   }
                 : null;
             }
           ),
-          functionObject => functionObject !== null
+          functionObject => functionObject
         )
       : [];
   }

@@ -4,6 +4,7 @@
     <app-function-list
       [functionList]="functionList$ | async"
       [activeFunction]="activeFunction$ | async"
+      [currentUser]="currentUser$ | async"
       (delete)="onDeleteFunction($event)"
       (save)="onSaveFunction($event)"
       (activate)="onActivateFunctionObject($event)"
@@ -16,6 +17,7 @@
   <div class="col-sm-3">
     <app-function-rule-list
       [functionRules]="functionRules$ | async"
+      [functionObject]="activeFunction$ | async"
       (activate)="onActivateFunctionRule($event)"
       (newFunctionRule)="onNewFunctionRule($event)"
     >
@@ -59,12 +61,12 @@
         >
           <app-function-editor
             [functionObject]="activeFunction$ | async"
-            [currentVisualizationDataSelections]="
-              currentVisualizationDataSelections$ | async
-            "
+            [activeFunctionRule]="activeFunctionRule$ | async"
+            [selectedFunctionParameters]="selectedFunctionParameters$ | async"
             (simulate)="onSimulateFunction($event)"
             (delete)="onDeleteFunction($event)"
             (save)="onSaveFunction($event)"
+            (update)="onUpdateFunction($event)"
           ></app-function-editor>
         </div>
         <div
@@ -77,8 +79,10 @@
         >
           <app-function-rule-editor
             [functionRule]="activeFunctionRule$ | async"
+            [functionObject]="activeFunction$ | async"
             (simulate)="onSimulateFunctionRule($event)"
             (save)="onSaveFunctionRule($event)"
+            (update)="onUpdateFunctionRule($event)"
           ></app-function-rule-editor>
         </div>
       </div>

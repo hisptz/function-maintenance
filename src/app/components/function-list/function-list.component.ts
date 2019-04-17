@@ -69,7 +69,8 @@ export class FunctionListComponent implements OnInit {
     }
     this.pageClustering.push({ name: 'All', value: this.pager.total });
   }
-  deleteFunctionObject(functionObject) {
+  deleteFunctionObject(event, functionObject) {
+    event.stopPropagation();
     this.delete.emit(functionObject);
   }
 
@@ -87,23 +88,17 @@ export class FunctionListComponent implements OnInit {
     this.pager.pageSize = size;
   }
 
-  create() {
+  create(event) {
+    event.stopPropagation();
     this.newLoading = true;
     this.functionService.create(this.currentUser).subscribe(
       (functionObject: any) => {
-        this.store.dispatch(
-          new AddFunction({
-            function: {
-              ...functionObject,
-              rules: _.map(functionObject.rules, (rule: any) => rule.id)
-            }
-          })
-        );
         this.newFunction.emit(functionObject);
         this.newLoading = false;
       },
       error => {
         this.toasterService.pop('error', 'Error', error.message);
+        this.newLoading = false;
       }
     );
   }
