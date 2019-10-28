@@ -23,16 +23,18 @@
 
 
 ### Set up & Installation                                                                                                                                                                                                    
- > * Clone the repository from GitHub                                                                                                                                                                  
- ```                                                                                                                                                                            git clone https://github.com/hisptz/function-maintenance.git                                                                                                                                                      
-```                                                                                                                                                                                                   
-> * Enter to the directory and execute the following npm command to install the application to your computer.                                                                                         
-```                                                                                                                                                                             npm install                                                                                                                                                                                           
-```                                                                                                                                                                                                   
-> * Once the application is installed and all its dependencies, execute the next command to run the application.                                                                                      
-```                                                                                                                                                                                         
-npm start                                                                                                                                                                                             
-```                                    
+> * Clone the repository from GitHub
+```angularjs
+git clone https://github.com/hisptz/function-maintenance.git
+```
+> * Enter to the directory and execute the following npm command to install the application to your computer.
+```angularjs
+npm install
+```
+> * Once the application is installed and all its dependencies, execute the next command to run the application. 
+```angularjs
+npm start
+```                                   
 
 
 ## Code scaffolding
